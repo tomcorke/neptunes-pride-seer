@@ -63,8 +63,8 @@ window.np_seer = window.np_seer || (function($, console){
         }
     });
 
-    function getState(){
-        return copyState(u.galaxy, true);
+    function getLiveState(){
+        return copyState(u.galaxy, true, u.player);
     }
 
     var COMMAND_NOTHING = 0;
@@ -117,7 +117,7 @@ window.np_seer = window.np_seer || (function($, console){
         return playerColorText(state.players[fleet.puid], fleet.n);
     }
 
-    function copyState(state, initialCopy = false){
+    function copyState(state, initialCopy = false, player){
 
         // Copy tick and production properties
         var newState = {
@@ -168,7 +168,10 @@ window.np_seer = window.np_seer || (function($, console){
                     star.bitsOfShips,
                 x: star.x,
                 y: star.y,
-                ga: star.ga // Has warp gate
+                ga: star.ga, // Has warp gate
+                science: initialCopy ?
+                    star.s :
+                    star.science
             };
         });
 
@@ -186,6 +189,25 @@ window.np_seer = window.np_seer || (function($, console){
                 }, {})
             };
         });
+
+        // Copy current player
+        let _player = initialCopy ? player : state.player;
+        newState.player = {
+            tech: Object.keys(_player.tech).reduce((o,k) => {
+                let tech = _player.tech[k];
+                o[k] = {
+                    brr: tech.brr,
+                    bv: tech.bv,
+                    level: tech.level,
+                    research: tech.research,
+                    value: tech.bv
+                };
+                return o;
+            }, {}),
+            researching: _player.researching,
+            researching_next: _player.researching_next,
+            uid: _player.uid
+        };
 
         return newState;
     }
@@ -469,12 +491,33 @@ window.np_seer = window.np_seer || (function($, console){
 
         // Conduct research
 
+        let totalScience = Object.keys(newState.stars)
+            .reduce((total,s) => {
+                    let star = newState.stars[s];
+                    return total + (star.puid === newState.player.uid ? star.science : 0);
+            }, 0);
+
+        let researchingTech = newState.player.tech[newState.player.researching];
+        researchingTech.research += totalScience;
+        let researchNeeded = researchingTech.brr * researchingTech.level;
+        if(researchingTech.research >= researchNeeded){
+            researchingTech.research -= researchNeeded;
+            researchingTech.level++;
+            events.push(`<span class='icon-beaker'></span> Research completed: ${newState.player.researching} level ${researchingTech.level}`);
+            researchingTech.value = researchingTech.bv * researchingTech.level;
+            newState.players[newState.player.uid].tech[newState.player.researching].level = researchingTech.level;
+            newState.players[newState.player.uid].tech[newState.player.researching].value = researchingTech.value;
+            newState.player.researching = newState.player.researching_next;
+        }
+
         // If end of turn, do production (money and experimentation)
         newState.production_counter++;
         if(newState.production_counter >= newState.production_rate){
             newState.production_counter = 0;
 
             // Do production
+
+            // Actually, we don't care about money and experimentation is random!
         }
 
         // Check for win
@@ -493,7 +536,7 @@ window.np_seer = window.np_seer || (function($, console){
         var ticks = max(1, ticksToSimulate);
         c.append($('<p>').text(`Simulating ${ticks} ticks`));
 
-        var state = getState();
+        var state = getLiveState();
 
         var tick = 0;
 
@@ -504,10 +547,10 @@ window.np_seer = window.np_seer || (function($, console){
             tick++;
             tickTime += state.tick_rate * 60 * 1000;
             let tickDate = new Date(tickTime);
-            var hours = tickDate.getHours();
+            var hours = "0" + tickDate.getHours();
             var minutes = "0" + tickDate.getMinutes();
             var seconds = "0" + tickDate.getSeconds();
-            var formattedTime = hours + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
+            var formattedTime = hours.substr(-2) + ':' + minutes.substr(-2) + ':' + seconds.substr(-2);
 
             var result = tickState(state);
             state = result.newState;
