@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Neptune's Pride Seer
 // @namespace    http://tomcorke.com/
-// @version      0.2
+// @version      0.2.1
 // @description  Helps you to take over the world!
 // @author       Shot
 // @require      https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js
