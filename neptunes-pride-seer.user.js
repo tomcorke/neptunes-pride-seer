@@ -38,6 +38,7 @@ window.np_seer = window.np_seer || (function($, console){
         color: 'white',
         fontSize: '12px',
         lineHeight: '110%',
+        pointerEvents: 'none'
     })
     .appendTo('body');
 
