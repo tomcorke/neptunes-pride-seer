@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Neptune's Pride Seer
 // @namespace    http://tomcorke.com/
-// @version      0.2.1
+// @version      0.2.2
 // @description  Helps you to take over the world!
 // @author       Shot
 // @require      https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js
@@ -382,7 +382,9 @@ window.np_seer = window.np_seer || (function($, console){
                 if(defender && attacker){
                     console.log(defender, attacker, star, star.fleetsInOrbit.map(id => newState.fleets[id]));
                     console.log(`Resolving battle between ${defender.alias} and ${attacker.alias} at ${star.n}: ${defenderShips} ships defending, ${attackerShips} attacking`);
-                    events.push(`<span class='icon-tools'></span> <span style='color:red'>Battle</span> at ${colouredStarName(newState,star)}. ${defenderShips} defending, ${attackerShips} attacking`);
+                    if(defenderShips > 0){
+                        events.push(`<span class='icon-tools'></span> <span style='color:red'>Battle</span> at ${colouredStarName(newState,star)}. ${defenderShips} defending, ${attackerShips} attacking`);
+                    }
                 }
 
                 while(defenderShips > 0 && attackerShips > 0){
