@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Neptune's Pride Seer
 // @namespace    http://tomcorke.com/
-// @version      0.2.2
+// @version      0.3.0
 // @description  Helps you to take over the world!
 // @author       Shot
 // @include      http://np.ironhelmet.com/game/*
