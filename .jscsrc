@@ -1,0 +1,10 @@
+{
+    preset: "google",
+    esnext: false,
+    fileExtensions: [".js", ".jsx"],
+    validateIndentation: 4,
+    maximumLineLength: false,
+    requireSpaceBeforeKeywords: [
+        "else"
+    ]
+}

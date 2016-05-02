@@ -1,0 +1,25 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 5,
+        "sourceType": "script",
+        "ecmaFeatures": {
+            "impliedStrict": true,
+            "jsx": true
+        }
+    },
+    "plugins": [
+    ],
+    "env": {
+        "es6": false,
+        "browser": true,
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "rules": {
+        "semi": 2, // Error on missing semicolons
+        "no-console": 1, // Useful for debugging so only warn instead of error
+        "indent": [2, 4],
+        "no-undef": 2
+    }
+}
